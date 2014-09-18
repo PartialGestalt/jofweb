@@ -1,0 +1,47 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("upload-pre.php");
+?>
+<?php
+// Set up common parameters before calling into the upload form
+    // Referrer is REQUIRED
+$upload_form_referrer=$_SERVER['HTTP_REFERER'];
+    // Header and footer extras are OPTIONAL
+?>
+
+/*
+ * CLEAN: All of the form text should be within an auth check.
+ */
+<div id="upload-form-div" class="form-div upload-form-div">
+<form action="/upload-logged.php" 
+      method="post" 
+      id="upload-form" 
+      enctype="multipart/form-data"
+<?php
+print ' onsubmit="ak_spinner(\'upload-form-div\',\''.skin_getName().'\');return true;"';
+?>
+>
+
+<div class="form-item-div form-file-div">
+<label for="upload-form-file" class="upload-form-label">File:</label>
+<input id="upload-form-file" name="file1" type="file" class="form-file" />
+</div>
+<input name="file2" type="file" size="20"/>
+
+<div class="form-item-div form-submit-div">
+<input id="upload-form-submit" name="submit" type="submit" class="form-button form-button-submit" value="Upload"/>
+</div>
+
+<div class="form-item-div form-hidden-div">
+<?php
+echo "<input id=\"upload-form-referrer\" name=\"referrer\" type=\"hidden\" class=\"form-hidden-entry\" value=\"".$upload_form_referrer."\"/>";
+?>
+</div>
+
+</form>
+</div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("upload-post.php");
+?>

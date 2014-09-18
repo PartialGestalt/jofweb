@@ -1,0 +1,16 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("upload-processor-pre.php");
+?>
+<h1 class="story-headline">Upload</h1>
+<h2 class="story-headline">Results</h2>
+<span class="story-span">
+<?php
+print_r($_FILES);
+?>
+</span>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("upload-processor-post.php");
+?>

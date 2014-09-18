@@ -1,0 +1,4 @@
+<?php
+require_once('blocks/app/block-map.php');
+?>
+

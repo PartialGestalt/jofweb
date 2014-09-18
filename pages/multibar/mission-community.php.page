@@ -1,0 +1,8 @@
+<?php
+require_once("library/core/class-story.php");
+// Intro -- start with simple welcome story
+$community = new akStory();
+$community->createSimpleChunk(STORY_CHUNK_HEADLINE,"Mission in Community");
+$community->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/mission-community/page.html");
+$community->emit();
+?>

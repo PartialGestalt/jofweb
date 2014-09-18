@@ -1,0 +1,49 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("programs-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+
+/* Overview */
+$prog = new akStory();
+  /* Headline */
+$prog->createSimpleChunk(STORY_CHUNK_HEADLINE,"Programs");
+$nav = new akMenu();
+  /* In-page section nav */
+$nav->dom_id = "program-group-menu";
+$nav->createSimpleItem("Overview","programs.php","Overview of program groups");
+//$nav->createSimpleItem("Adults","program-group-adult.php","Programs and ministries for Adults");
+//$nav->createSimpleItem("Youth","program-group-youth.php","JoF A.R.M.Y and other options for young adults");
+//$nav->createSimpleItem("Children","program-group-children.php","Childrens' ministries and programs");
+$prog->createSimpleChunk(STORY_CHUNK_OBJECT,"program-menu",$nav);
+  /* Intro text */
+$prog->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/programs/intro.html");
+$prog->emit();
+
+/* Adult programs */
+$adult = new akStory();
+$adult->createSimpleChunk(STORY_CHUNK_SECTION,"Adults");
+$adult->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/programs/adults.html");
+$adult->emit();
+/* Youth */
+  /* Base information */
+$youth = new akStory();
+$youth->createSimpleChunk(STORY_CHUNK_SECTION,"Youth");
+$youth->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/programs/youth.html");
+$youth->emit();
+  /* Video block -- just to show it can be done */
+$vid = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-video-youtube.php");
+$vid->setParameter('youtube_video_id',"VzvWyC_QUIM");
+$vid->emit();
+/* Children */
+$kids = new akStory();
+$kids->createSimpleChunk(STORY_CHUNK_SECTION,"Kids and younger");
+$kids->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/programs/children.html");
+$kids->emit();
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("programs-post.php");
+?>

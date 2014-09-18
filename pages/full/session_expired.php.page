@@ -1,0 +1,6 @@
+<?php
+$logStory = new akStory();
+$logStory->createSimpleChunk(STORY_CHUNK_HEADLINE,"Session Expired");
+$logStory->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/session-expired/expired.html");
+$logStory->emit();
+?>

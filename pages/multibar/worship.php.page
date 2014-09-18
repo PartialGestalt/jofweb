@@ -1,0 +1,27 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("worship-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+$worshipStory = new akStory();
+
+$worshipStory->createSimpleChunk(STORY_CHUNK_HEADLINE,"Worship at Journey of Faith");
+$worshipStory->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/worship/overview.html");
+
+$worshipStory->createSimpleChunk(STORY_CHUNK_SECTION,"What to expect");
+$worshipStory->createSimpleChunk(STORY_CHUNK_LEDE,"assets/pages/worship/overview.jpg");
+$worshipStory->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/worship/expect.html");
+
+//$worshipStory->createSimpleChunk(STORY_CHUNK_SECTION,"The rest of the week");
+//$worshipStory->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/worship/further.html");
+
+
+$worshipStory->emit();
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("worship-post.php");
+?>

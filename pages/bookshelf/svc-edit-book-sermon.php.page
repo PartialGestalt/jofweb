@@ -1,0 +1,104 @@
+<?php
+// PHP bookshelf page to emit sermon editor form
+
+?>
+<?php
+/* Step 0: Includes */
+require_once("library/core/util-config.php");
+require_once("library/core/util-db.php");
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 1: Pull info from DB */
+$book = config_getParameter('edit-book-object');
+$seriesList = db_seriesList($book->id);
+$sermonList = db_sermonsByDateRange($book->id); /* No start/end dates */
+//$chunkList = db_chunkList($book->id); /* No story ID */
+
+/* Step 2: Start intro story */
+$ss = new akStory("edit-sermon-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Sermon editor");
+$ss->emit();
+
+/* Step 3: Create a 3-page notebook */
+  /* Step 3.1: Editor page for NEW sermon entry */
+$editPage = new akNotePage("edit-new","New Sermon");
+$editForm = new akForm("sermon-edit-form",
+                       "/svc-process-book-sermon.php",
+                       FORM_METHOD_POST);
+  /* Add a couple of hidden fields for data tracking */
+$editForm->createSimpleItem("sermon-edit-book",FORM_ITEM_HIDDEN,
+                            "sermon-edit-book",$book->id);
+$editForm->createSimpleItem("sermon-edit-mode",FORM_ITEM_HIDDEN,
+                            "sermon-edit-mode","new");
+$editForm->createSimpleItem("sermon-current-series",FORM_ITEM_HIDDEN,
+                            "sermon-current-series",htmlentities($seriesList[0]->title));
+  /* CLEAN: Init this with the first sunday after today that doesn't
+   *        already have an entry....
+   */
+$editForm->createSimpleItem("sermon-edit-date",FORM_ITEM_DATE,
+                            "sermon-edit-date","00/00/0000",
+                            "Date of delivery:");
+  /* Sermon series: Selection list with the default entry as the most
+   * recently-added sermon series title.
+   */
+$editForm->createSimpleItem("sermon-edit-series",FORM_ITEM_SELECT,
+                            "sermon-edit-series",null,
+                            "Select Series");
+$editForm->lastSimpleItem->addEvent("onChange","el=document.getElementById('sermon-edit-newseries-row'); cs=document.getElementById('sermon-current-series'); if (this.selectedIndex == 0) {el.style.display='table-row';} else {el.style.display='none'; cs.value=this.options[this.selectedIndex].text;};");
+$editForm->lastSimpleItem->addOption(0,"(NEW SERIES: Enter new series below)");
+$is_default = true;
+foreach ($seriesList as $series) {
+  $slabel= $series->title;
+  if (null != $series->subtitle) $slabel .= ': '.$series->subtitle;
+  $editForm->lastSimpleItem->addOption($series->id, $slabel, $is_default);
+  $is_default = false;
+}
+$editForm->createSimpleItem("sermon-edit-newseries",FORM_ITEM_TEXT,
+                            "sermon-edit-newseries",null,
+                            "New series:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->addRowStyle("display","none");
+$editForm->createSimpleItem("sermon-edit-title",FORM_ITEM_TEXT,
+                            "sermon-edit-title",null,
+                            "Sermon title:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->createSimpleItem("sermon-edit-notes",FORM_ITEM_TEXTAREA,
+                            "sermon-edit-notes",null,
+                            "Notes:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->vsize = 20;
+$editForm->createSimpleItem("sermon-edit-save",FORM_ITEM_SUBMIT,
+                            "sermon-edit-save","Save this entry");
+$editPage->adopt($editForm);
+
+  /* Step 3.2: Sermon series editor */
+$seriesPage = new akNotePage("series","Edit Series");
+$seriesForm = new akForm("sermon-series-form");
+
+$seriesForm->createSimpleItem("sermon-edit-mode",FORM_ITEM_HIDDEN,
+                            "sermon-edit-mode","series");
+
+//$seriesList = db_seriesByBook($book->id);
+$seriesForm->createSimpleItem("series-edit-title",FORM_ITEM_TEXT,
+                              "series-edit-title","New Series",
+                              "Series Title:");
+
+$seriesPage->adopt($seriesForm);
+
+  /* Step 3.3: Book Properties page */
+$propPage = new akNotePage("properties","Book Properties");
+
+
+
+  /* Step 4: Make the notebook */
+$editBook = new akNotebook("edit-sermon-notebook");
+$editBook->adopt($editPage);
+//$editBook->adopt($seriesPage);
+//$editBook->adopt($propPage);
+
+$editBook->emit();
+
+?>

@@ -1,0 +1,38 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("bookshelf-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+// Verify authenticated user
+if (!is_authenticated())
+{
+  // Not authenticated; can't use this page.
+  $authStory = new akStory();
+  $authStory->createSimpleChunk(STORY_CHUNK_SECTION,"Authentication Failure");
+  $authStory->createSimpleChunk(STORY_CHUNK_TEXT,"You must be logged in to use your bookshelf.");
+  $authStory->emit();
+}
+else
+{
+  // Common Header
+  $heading=$auth_user->displayname."'s Bookshelf";
+  $bookStory = new akStory();
+  $bookStory->createSimpleChunk(STORY_CHUNK_HEADLINE,$heading);
+  $bookStory->emit();
+
+  // The bookshelf is basically a two-region control
+  // panel, with editable books available for selection
+  // and a workarea.
+    // Shelf
+  require("blocks/core/block-bookshelf-menu.php");
+    // Workarea (will setup based on selected book, if any
+  require("blocks/core/block-bookshelf-canvas.php");
+}
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("bookshelf-post.php");
+?>

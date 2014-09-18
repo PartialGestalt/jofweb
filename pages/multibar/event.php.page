@@ -1,0 +1,32 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("event-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+/* Get parameters */
+$targetDate=config_getValue('date');
+$targetId=config_getValue('id');
+
+/* If we have an ID, load a single entry */
+if ($targetId != 'default')
+{
+  /* It's a single event, ignore the date */
+  $evBlock = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-event-app.php");
+  $evBlock->setParameter('event-id',$targetId);
+  $evBlock->emit();
+}
+else 
+{
+  /* Not a single entry -- choose values from date */
+  $evBlock = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-event-date.php");
+  $evBlock->setParameter('event-date',$targetDate);
+  $evBlock->emit();
+}
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("event-post.php");
+?>

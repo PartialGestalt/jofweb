@@ -1,0 +1,69 @@
+<?php
+// PHP bookshelf page to emit album editor
+core_addScriptFile('text/javascript','/marbo.js');
+?>
+<?php
+/* Step 0: Includes */
+require_once("library/core/util-config.php");
+require_once("library/core/util-db.php");
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 1: Pull info from DB */
+$book = config_getParameter('edit-book-object');
+
+/* Step 2: Start intro story */
+$ss = new akStory("edit-album-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Album editor");
+$ss->emit();
+
+/* Step 3: Create a 3-page notebook */
+  /* Step 3.1: Items */
+$itemPage = new akNotePage("album-items","Items");
+
+  /* Step 3.2: Uploader */
+$uploadPage = new akNotePage("album-upload","Upload");
+$uploadForm = new akForm("album-upload-form");
+
+$uploadForm->createSimpleItem("album-edit-mode",FORM_ITEM_HIDDEN,
+                            "album-edit-mode","upload");
+
+$uploadPage->adopt($seriesForm);
+
+  /* Step 3.3: Properties page for general album properties */
+$propPage = new akNotePage("edit-new","Properties");
+$propForm = new akForm("album-edit-form",
+                       "/svc-process-book-album.php",
+                       FORM_METHOD_POST);
+  /* Add a couple of hidden fields for data tracking */
+$propForm->createSimpleItem("album-edit-book",FORM_ITEM_HIDDEN,
+                            "album-edit-book",$book->id);
+$propForm->createSimpleItem("album-edit-mode",FORM_ITEM_HIDDEN,
+                            "album-edit-mode","new");
+$propForm->createSimpleItem("album-edit-date",FORM_ITEM_DATE,
+                            "album-edit-date","00/00/0000",
+                            "Reference Date:");
+$propForm->createSimpleItem("album-edit-title",FORM_ITEM_TEXT,
+                            "album-edit-title",null,
+                            "Album title:");
+$propForm->lastSimpleItem->hsize = 40;
+$propForm->createSimpleItem("album-edit-notes",FORM_ITEM_TEXTAREA,
+                            "album-edit-notes",null,
+                            "Notes:");
+$propForm->lastSimpleItem->hsize = 40;
+$propForm->lastSimpleItem->vsize = 20;
+$propForm->createSimpleItem("album-edit-save",FORM_ITEM_SUBMIT,
+                            "album-edit-save","Save this entry");
+$propPage->adopt($propForm);
+
+  /* Step 4: Make the notebook */
+$editBook = new akNotebook("edit-album-notebook");
+$editBook->adopt($propPage);
+$editBook->adopt($itemPage);
+$editBook->adopt($uploadPage);
+
+$editBook->emit();
+
+?>

@@ -1,0 +1,77 @@
+<?php
+// PHP service script to emit sermon editor form
+
+  // This is an HTML-formatted service
+header('Content-type: text/html');
+?>
+<?php
+/* Step 1: Includes */
+require_once("library/core/util-config.php");
+require_once("library/core/util-db.php");
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 2: Start intro story */
+$ss = new akStory("edit-sermon-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Sermon Editor");
+$ss->emit();
+
+$book = config_getParameter('edit-book-object');
+
+/* Step 3: Create a 2-page notebook */
+  /* Step 3.1: Editor page (if no sermon id is given, edit new) */
+$editPage = new akNotePage("edit","New Sermon");
+$editForm = new akForm("sermon-edit-form");
+  /* CLEAN: Need a datepicker form item, dude. */
+  /* CLEAN: Init this with the first sunday after today that doesn't
+   *        already have an entry....
+   */
+$editForm->createSimpleItem("sermon-edit-book",FORM_ITEM_HIDDEN,
+                            "sermon-edit-book",$book->id);
+$editForm->createSimpleItem("sermon-edit-date",FORM_ITEM_TEXT,
+                            "sermon-edit-date","00/00/0000",
+                            "Date of delivery:");
+  /* CLEAN: Import this from the series of the previous sunday */
+$editForm->createSimpleItem("sermon-edit-series",FORM_ITEM_TEXT,
+                            "sermon-edit-series",null,
+                            "Sermon series title:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->createSimpleItem("sermon-edit-title",FORM_ITEM_TEXT,
+                            "sermon-edit-title",null,
+                            "Sermon title:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->createSimpleItem("sermon-edit-notes",FORM_ITEM_TEXTAREA,
+                            "sermon-edit-notes",null,
+                            "Notes:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->vsize = 20;
+$editForm->createSimpleItem("sermon-edit-save",FORM_ITEM_BUTTON,
+                            "sermon-edit-save","Save this entry");
+$editForm->lastSimpleItem->addEvent('onClick',"svc_loadDiv('bookshelf-canvas-container','process-book-sermon',svc_formParameters('sermon-edit-form'));");
+$editPage->adopt($editForm);
+
+  /* Step 3.2: Archive page */
+$archivePage = new akNotePage("archive","Previous Sermons");
+$archiveForm = new akForm("sermon-archive-form");
+
+$sermonList = db_sermonsByDateRange($book->id); /* No start/end dates */
+foreach ($sermonList as $sermon) {
+  $archiveForm->createSimpleItem("sermon-archive-".$sermon->deliver_date,
+                                 FORM_ITEM_BUTTON,
+                                 "sermon-archive-".$sermon->deliver_date,
+                                 $sermon->title." (".$sermon->deliver_date.")");
+
+}
+$archivePage->adopt($archiveForm);
+
+
+  /* Step 4: Make the notebook */
+$editBook = new akNotebook("edit-sermon-notebook");
+$editBook->adopt($editPage);
+$editBook->adopt($archivePage);
+
+$editBook->emit();
+
+?>

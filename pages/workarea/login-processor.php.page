@@ -1,0 +1,32 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("login-processor-pre.php");
+?>
+<?php
+// Test for good username/password combo (test happened in 'early' block)
+if ((null==$auth_user) || ($auth_user->name == 'default'))
+{
+  // Login failure -- show login form again
+  $st = new akStory();
+  $st->createSimpleChunk(STORY_CHUNK_HEADLINE,"Login Failure");
+  $st->createSimpleChunk(STORY_CHUNK_ERROR,"Username or password incorrect, or something else went wrong.");
+  $st->createSimpleChunk(STORY_CHUNK_TEXT,"Try again.");
+  $st->emit();
+    // REQUIRED PARAMTERS  
+  $login_form_referrer=$_REQUEST['referrer'];
+    // OPTIONAL PARAMETERS
+  $login_form_header="blocks/core/block-login-fail-header.php";
+  $login_form_footer="blocks/core/block-login-fail-footer.php";
+  require("blocks/core/block-login-form.php");
+}
+else
+{
+  // Login succeeded, redirect to bookshelf
+  core_redirect("/bookshelf.php");
+}
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("login-processor-post.php");
+?>

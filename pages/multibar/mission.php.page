@@ -1,0 +1,10 @@
+<?php
+require_once("library/core/class-story.php");
+// Intro -- start with simple welcome story
+$overview = new akStory();
+$overview->createSimpleChunk(STORY_CHUNK_HEADLINE,"It starts here...");
+$overview->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/mission/intro.html");
+$overview->createSimpleChunk(STORY_CHUNK_HEADLINE,"Overview");
+$overview->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/mission/overview.html");
+$overview->emit();
+?>

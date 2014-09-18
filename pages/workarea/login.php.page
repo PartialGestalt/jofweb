@@ -1,0 +1,24 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("login-pre.php");
+?>
+<?php
+$logStory = new akStory();
+$logStory->createSimpleChunk(STORY_CHUNK_HEADLINE,"Login");
+$logStory->createSimpleChunk(STORY_CHUNK_SECTION,"Why Login?");
+$logStory->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/login/why.html");
+$logStory->emit();
+// Set up common parameters before calling into the login form
+    // Referrer is REQUIRED
+$login_form_referrer=$_SERVER['HTTP_REFERER'];
+    // Header and footer extras are OPTIONAL
+unset($login_form_header);
+unset($login_form_footer);
+
+require("blocks/core/block-login-form.php");
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("login-post.php");
+?>

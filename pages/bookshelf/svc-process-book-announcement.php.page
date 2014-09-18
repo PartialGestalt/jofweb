@@ -1,0 +1,46 @@
+<?php
+/*
+ * svc-process-book-announcement -- Service to process an 'announcement'
+ *    book edit.
+ *
+ * NOTES:
+ *   A 'announcement' is a short notice to list on the front page,
+ *   with headline and body text.
+ */
+/* Step 1: Get current user auth info */
+require_once("library/core/util-db.php");
+require_once("library/core/util-auth.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/util-skin.php");
+auth_validate();
+
+/* Step 2: Create a story entry object from fields */
+$st = new akStoryEntry();
+
+$st->title = form_getField('announcement-edit-title');
+$st->book = form_getField('announcement-edit-book');
+$st->author = $auth_user->uid;
+
+/* Step 3: Create file and store text */
+$notes_file = book_createAsset($st->book,"html");
+if ($notes_file == null) {
+  print '[[Asset error: '.config_getLastError().']]';
+} else {
+  $st->text = $notes_file;
+  file_put_contents($st->text,stripslashes(form_getField('announcement-edit-notes')));
+}
+
+/* Step 4: Push it into the DB */
+$res = new akStory();
+if (db_saveStory($st)) {
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Announcement Edit: Success");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"Announcement info saved successfully to database, and should be available on the front page immediately.");
+}else {
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Announcement Edit: Failure");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"The update failed during database update. Please try again later.");
+}
+
+$res->emit();
+
+?>

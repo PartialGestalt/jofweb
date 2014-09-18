@@ -1,0 +1,31 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("sermon-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+/* Get parameters */
+$targetDate=config_getValue('date');
+  /*
+   * If we don't have a target date, treat this as an archive
+   */
+if ($targetDate == 'default')
+{
+  /* It's an archive listing */
+  $serBlock = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-sermon-archive.php");
+  $serBlock->emit();
+}
+else
+{
+  /* It's a single date */
+  $serBlock = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-sermon-app.php");
+  $serBlock->setParameter('sermon-date',$targetDate);
+  $serBlock->emit();
+}
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("sermon-post.php");
+?>

@@ -1,0 +1,22 @@
+/* SECTION 1: Common values and macros */
+  /* Colors */
+#define JOF_RED #C82020
+
+/* SECTION 2: Import common CSS */
+#include "../common/default.css.h"
+
+/* SECTION 3: The bits */
+body.page-body {
+  font-family:sans-serif;
+  font-size:11pt;
+  background: #FFFFFF url('/skins/default/gradient.png') repeat-x;
+  padding:0px;
+  margin:0px;
+flob:dflkj
+}
+
+#skin-default-header {
+display:block;
+width:100%;
+border-bottom: 1px solid white;
+}

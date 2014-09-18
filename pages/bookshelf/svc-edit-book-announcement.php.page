@@ -1,0 +1,48 @@
+<?php
+// PHP service script to emit announcements editor 
+?>
+<?php
+/* Step 1: Includes */
+require_once("library/core/util-config.php");
+require_once("library/core/util-db.php");
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 2: Start intro story */
+$ss = new akStory("edit-announcement-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Announcement Editor");
+$ss->emit();
+
+$book = config_getParameter('edit-book-object');
+
+/* Step 3: Create a 2-page notebook */
+  /* Step 3.1: Editor page */
+$editPage = new akNotePage("edit","New Announcement");
+$editForm = new akForm("announcement-edit-form",
+                       "/svc-process-book-announcement.php",
+                       FORM_METHOD_POST);
+$editForm->createSimpleItem("announcement-edit-book",FORM_ITEM_HIDDEN,
+                            "announcement-edit-book",$book->id);
+
+$editForm->createSimpleItem("announcement-edit-title",FORM_ITEM_TEXT,
+                            "announcement-edit-title",null,
+                            "Headline:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->createSimpleItem("announcement-edit-notes",FORM_ITEM_TEXTAREA,
+                            "announcement-edit-notes",null,
+                            "Text:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->vsize = 30;
+$editForm->createSimpleItem("announcement-edit-save",FORM_ITEM_SUBMIT,
+                            "announcement-edit-save","Save this announcement");
+$editPage->adopt($editForm);
+
+  /* Step 4: Make the notebook */
+$editBook = new akNotebook("edit-announcement-notebook");
+$editBook->adopt($editPage);
+
+$editBook->emit();
+
+?>

@@ -1,0 +1,17 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("viewer-photo-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+$viewer = new akStory();
+$viewer->createSimpleChunk(STORY_CHUNK_HEADLINE,"Gallery: ".$_REQUEST['gallery']);
+$viewer->createSimpleChunk(STORY_CHUNK_BANNER,$_REQUEST['image_path']);
+$viewer->emit();
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("viewer-photo-post.php");
+?>

@@ -1,0 +1,60 @@
+<?php
+/*
+ * svc-process-book-sermon -- Service to process a 'sermon'
+ *    book edit.
+ *
+ * NOTES:
+ *   A 'sermon' is just a named instance of a generic story
+ *   that has a series title and delivery date.
+ */
+/* Step 1: Get current user auth info */
+require_once("library/core/util-db.php");
+require_once("library/core/util-auth.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/util-skin.php");
+auth_validate();
+
+/* Step 2: Extract key pieces from form data */
+$book = form_getField('sermon-edit-book');
+$deliver_date = new DateTime(form_getField('sermon-edit-date'));
+if (0 == form_getField('sermon-edit-series')) {
+  /* New series...pull from field and store in SERIES table */
+  $series = addslashes(form_getField('sermon-edit-newseries'));
+  db_saveSeries(0,$book,$series);
+} else {
+  /* Existing series, just include */
+  $series = addslashes(form_getField('sermon-current-series'));
+}
+
+/* Step 2: Create a story entry object from fields */
+$st = new akStoryEntry();
+
+$st->deliver_date = $deliver_date->format("Y-m-d");
+$st->series = $series;
+$st->title = form_getField('sermon-edit-title');
+$st->book = $book;
+$st->author = $auth_user->uid;
+
+/* Step 3: Create file and store text */
+$notes_file = book_createAsset($book,"html",$deliver_date);
+if ($notes_file == null) {
+  print '[[Asset error: '.config_getLastError().']]';
+} else {
+  $st->text = $notes_file;
+  file_put_contents($st->text,stripslashes(form_getField('sermon-edit-notes')));
+}
+
+/* Step 4: Push it into the DB */
+$res = new akStory();
+if (db_saveStory($st)) {
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Sermon Edit: Success");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"Sermon info saved successfully to database.");
+}else {
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Sermon Edit: Failure");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"The update failed during database update. Please try again later.");
+}
+
+$res->emit();
+
+?>

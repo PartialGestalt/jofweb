@@ -1,0 +1,109 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("edit-story-file-pre.php");
+?>
+<?php
+// Step 1: Get args and setup
+$ref = $_SERVER['HTTP_REFERER'];
+$file = $_REQUEST['file'];
+
+$ok_to_go = true;
+$intro = new akStory();
+$intro->createSimpleChunk(STORY_CHUNK_HEADLINE,"HTML text editor");
+$intro->createSimpleChunk(STORY_CHUNK_SECTION,'File: "'.$file.'"');
+
+// Step 2: Security checks
+  // Step 2.1: Authentication
+if (!is_authenticated()) {
+  $ok_to_go = false;
+  $intro->createSimpleChunk(STORY_CHUNK_SECTION,"ERROR: Authentication Failure");
+  $intro->createSimpleChunk(STORY_CHUNK_TEXT,"You must be logged in and have sufficient permissions before editing this file."); 
+  $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Try logging in again, or contact your administrator.");
+}
+  // Step 2.2: If we're being asked to create, run some additional checks
+if (!file_exists($file)) {
+  // Validate target is in our assets and has no '..'
+  if ((substr($file,0,7) === 'assets/') && (false === strpos($file,'..'))) {
+    // All good; try to create the path and file
+    mkdir(dirname($file),0755,true);
+    file_put_contents($file,'TEMPLATE FILE');
+  } else {
+    $ok_to_go = false;
+    $intro->createSimpleChunk(STORY_CHUNK_SECTION,"ERROR: Bad file for creation.");
+    $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Well, we do have a problem.  You asked me to create \"".$file."\", but I can't do that.");
+    $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Verify the file that you are attempting to edit and try again.");
+  }
+}
+
+  // Step 2.3: File must exist at this point
+if ($ok_to_go && !is_readable($file)) {
+  $ok_to_go = false;
+  $intro->createSimpleChunk(STORY_CHUNK_SECTION,"ERROR: File Not Found");
+  $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Well, something went wrong here.  I can't seem to find \"".$file."\", and we can't really expect to edit something we can't find, right?");
+  $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Verify the file that you are attempting to edit and try again, or you can try to <a href=\"/edit-story-file.php?create=true&file=$file\" title=\"Create new file\">create the file</a>.");
+  $intro->createSimpleChunk(STORY_CHUNK_META,"(You probably followed a link here, though, so odds are it's really my fault....)");
+}
+
+//
+// Decide now: are we GET (loading the form) or POST 
+//(processing the form)?
+if ($_GET)
+{
+  // Step 2: Finish and emit the intro
+  if ($ok_to_go) {
+    // We're editing, so add our intro text from file
+    $intro->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/edit-story-file/intro.html");
+  }
+  $intro->emit();
+
+  // Step 3: Pull in the block if we've passed our security checks.
+  if ($ok_to_go)
+  {
+    $block = new akBlock(BLOCK_TYPE_WORKAREA,"blocks/editors/block-edit-html.php");
+    $block->setParameter('editor-filename',$file);
+    $block->setParameter('editor-processor',"edit-story-file.php");
+    $block->setParameter('editor-hostpage',$ref);
+    print '<div class="story-div">';
+    $block->emit();
+    print '</div>';
+  }
+
+  // Step 4: Add referrer button
+  /*
+  $outro = new akStory();
+  $outro->createSimpleChunk(STORY_CHUNK_META,'<a title="Return to referring page" href="'.$ref.'">Go back to what you were doing</a>');
+  $outro->emit();
+  */
+}
+else
+{
+  // Step 5: Make a backup of the resource
+  $backupfile=$file.".bak";
+  if (file_exists($backupfile)) unlink($backupfile);
+  rename($file,$backupfile);
+
+  // Step 6: Update file contents (dequote if necessary)
+  if (get_magic_quotes_gpc()) {
+    $newdata=stripslashes($_POST['edit-html-contents']);
+  } else {
+    $newdata=$_POST['edit-html-contents'];
+  }
+  file_put_contents($file,$newdata);
+
+  $intro->createSimpleChunk(STORY_CHUNK_TEXT,"Edits successfully saved; go back to the edited page or continue looking around.");
+
+  // Step 7: Emit processing intro
+  $intro->emit();
+
+  // Step 8: Create a button to return to updated host page
+  print '<a href="'.$_REQUEST['hostpage'].'" title="Return to edited page">';
+  skin_img("return_48.png","Return to original page","story-lede");
+  print '</a>';
+
+}
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("edit-story-file-post.php");
+?>

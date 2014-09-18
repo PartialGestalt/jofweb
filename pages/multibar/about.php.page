@@ -1,0 +1,53 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("about-pre.php");
+?>
+<?php
+/* Step 1: Start page story */
+$about = new akStory();
+$about->createSimpleChunk(STORY_CHUNK_HEADLINE,"About Journey of Faith");
+
+/* Step 2: Create "about" navigation menu */
+$nav = new akMenu();
+$nav->dom_id = "about-menu";
+
+$nav->createSimpleItem("Overview","about.php","Overview");
+$nav->createSimpleItem("Staff","about-staff.php","Meet the staff of Journey of Faith");
+$nav->createSimpleItem("Committees","about-committees.php","Committees in the church");
+$nav->createSimpleItem("Affiliations","about-affiliations.php","Groups with whom we are affiliated");
+$nav->createSimpleItem("Support Us","about-support-us.php","Online support");
+$about->createSimpleChunk(STORY_CHUNK_OBJECT,"about-menu",$nav);
+
+/* Step 3: Basic story */
+  /* Step 3.1: Who we are */
+$about->createSimpleChunk(STORY_CHUNK_SECTION,"Who we are");
+  /* UMC */
+$about->createSimpleChunk(STORY_CHUNK_LEDE,"skins/common/button_icon_umc_48_white.png");
+$about->lastSimpleChunk->url = "http://www.umc.org";
+$about->lastSimpleChunk->alt = "United Methodist Church home";
+$about->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about/who_umc.html");
+  /* RMN */
+$about->createSimpleChunk(STORY_CHUNK_LEDE,"skins/common/button_icon_rmn_48_white.png");
+$about->lastSimpleChunk->url = "http://www.rmnetwork.org";
+$about->lastSimpleChunk->alt = "Reconciling Ministries Network";
+$about->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about/who_rmn.html");
+  /* Step 3.2: When we meet */
+$about->createSimpleChunk(STORY_CHUNK_SECTION,"When we meet");
+$about->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about/when.html");
+$about->emit();
+
+/* Step 4: Location and map */
+  /* Step 4.1: Location Story */
+$mapStory = new akStory();
+$mapStory->createSimpleChunk(STORY_CHUNK_SECTION,"Where we are");
+$mapStory->createSimpleChunk(STORY_CHUNK_TEXT,"7301 County Road 110, Round Rock, Texas");
+$mapStory->createSimpleChunk(STORY_CHUNK_TEXT,"(about 1.8 miles north of Highway 79)");
+  /* Step 4.2: Map block */
+    /* CLEAN: Convert this to block object with provider/parameter model */
+require("blocks/app/block-map.php");
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("about-post.php");
+?>

@@ -1,0 +1,48 @@
+<?php
+/*
+ * svc-process-book-profile -- Service to process a 'profile'
+ *    book edit.
+ *
+ * NOTES:
+ *   We don't check that password fields match, the frontend is
+ *   responsible for that.
+ */
+/* Step 1: Get current user auth info */
+require_once("library/core/util-db.php");
+require_once("library/core/util-auth.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/util-skin.php");
+auth_validate();
+
+/* Step 2: Compose fields into a new user struct */
+  /* Step 2.1: Alloc new struct */
+$nu = new akUser($auth_user->name);
+  /* Step 2.2: Email */
+$nu->uid = $auth_user->uid;
+$nu->email = form_getField('profile-email');
+$nu->displayname = form_getField('profile-display-name');
+$nu->fullname = form_getField('profile-full-name');
+$nu->password = form_getField('profile-password');
+  /* Step 2.3: Skin */
+$nu->skin = form_getField('profile-skin');
+if (null != $nu->skin) skin_storeName($nu->skin);
+
+/* Step 3: Start results story */
+$res = new akStory();
+
+/* Step 4: Update user in db */
+if (true == db_updateUser($nu,$auth_user)) {
+    /* It worked! */
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Profile Update: Success");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"I made your changes, but you'll have to reload the page (or log out and back in) to see them.");
+} else {
+    /* Something failed... */
+  $res->createSimpleChunk(STORY_CHUNK_SECTION,"Profile Update: Failure");
+  $res->createSimpleChunk(STORY_CHUNK_TEXT,"The update failed. Please try again later.");
+}
+
+/* Step 5: emit the results */
+$res->emit();
+
+?>

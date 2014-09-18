@@ -1,0 +1,35 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("about-staff-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+$aboutStaff = new akStory();
+  /* HEADLINE */
+$aboutStaff->createSimpleChunk(STORY_CHUNK_HEADLINE,"Journey of Faith Staff");
+/* navigation menu */
+$nav = new akMenu();
+$nav->dom_id = "about-menu";
+
+$nav->createSimpleItem("Overview","about.php","Overview");
+$nav->createSimpleItem("Staff","about-staff.php","Meet the staff of Journey of Faith");
+$nav->createSimpleItem("Committees","about-committees.php","Committees in the church");
+$nav->createSimpleItem("Affiliations","about-affiliations.php","Groups with whom we are affiliated");
+$nav->createSimpleItem("Support Us","about-support-us.php","Online support");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_OBJECT,"about-menu",$nav);
+  /* PASTOR: GLENDA */
+$aboutStaff->createSimpleChunk(STORY_CHUNK_SECTION,"Pastor Glenda Whitehead");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_LEDE,"assets/profiles/glenda/profile_128.png");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-staff/glenda.html");
+  /* WORSHIP: JUSTIN */
+$aboutStaff->createSimpleChunk(STORY_CHUNK_SECTION,"Worship: Colin McDonald");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_LEDE,"assets/profiles/colin/profile_128.png");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-staff/colin.html");
+$aboutStaff->emit();
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("about-staff-post.php");
+?>

@@ -1,0 +1,28 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("vision-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+$aboutStaff = new akStory();
+
+$aboutStaff->createSimpleChunk(STORY_CHUNK_HEADLINE,"Our Vision for the Church");
+
+$aboutStaff->createSimpleChunk(STORY_CHUNK_SECTION,"Within the Church");
+//$aboutStaff->createSimpleChunk(STORY_CHUNK_LEDE,"???.png");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/vision/church.html");
+
+$aboutStaff->createSimpleChunk(STORY_CHUNK_SECTION,"Within the Community");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/vision/community.html");
+
+$aboutStaff->createSimpleChunk(STORY_CHUNK_SECTION,"Throughout the World");
+$aboutStaff->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/vision/world.html");
+
+$aboutStaff->emit();
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("vision-post.php");
+?>

@@ -1,0 +1,96 @@
+<?php
+// PHP service script to emit profile editor form
+?>
+<?php
+/* Step 1: Includes */
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/util-auth.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 2: Get user auth info */
+auth_validate();
+
+/* Step 3: Service story */
+$ss = new akStory("edit-profile-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Profile Settings");
+$ss->emit();
+
+/* Step 4: Create Notebook pages */
+  /* Step 4.1: Identity page */
+$identPage = new akNotePage("ident","Identity");
+$identForm = new akForm("profile-ident-form",
+                        "/svc-process-book-profile.php",
+                        FORM_METHOD_POST);
+$identForm->createSimpleItem("profile-header-ident",FORM_ITEM_RAW,
+                      "profile-header-ident","<h3 class=\"story-headline\">Identity</h3>");
+$identForm->createSimpleItem("profile-display-name", FORM_ITEM_TEXT,
+                      "profile-display-name", $auth_user->displayname,
+                      "Display Name:");
+
+$identForm->createSimpleItem("profile-full-name", FORM_ITEM_TEXT,
+                      "profile-full-name", $auth_user->fullname,
+                      "Full Name:");
+
+$identForm->createSimpleItem("profile-email", FORM_ITEM_TEXT,
+                      "profile-email", $auth_user->email,
+                      "Email:");
+
+$identForm->createSimpleItem("profile-ident-update", FORM_ITEM_SUBMIT,
+                             "profile-ident-update", "Update");
+
+//$identForm->lastSimpleItem->addEvent('onClick',"svc_loadDiv('bookshelf-canvas-container','process-book-profile',svc_formParameters('profile-ident-form'));");
+$identPage->adopt($identForm);
+
+  /* Step 4.2: Password change page */
+$passwdPage = new akNotePage("passwd","Change Password");
+$passwdForm = new akForm("profile-passwd-form",
+                        "/svc-process-book-profile.php",
+                        FORM_METHOD_POST);
+$passwdForm->createSimpleItem("profile-header-auth",FORM_ITEM_RAW,
+                      "profile-header-auth","<h3 class=\"story-headline\">Authentication</h3>");
+$passwdForm->createSimpleItem("profile-password", FORM_ITEM_PASSWORD,
+                      "profile-password", null, "New Password:");
+$passwdForm->createSimpleItem("profile-password-confirm", FORM_ITEM_PASSWORD,
+                      "profile-password-confirm", null, "Confirm Password:");
+$passwdForm->createSimpleItem("profile-passwd-update", FORM_ITEM_SUBMIT,
+                              "profile-passwd-update", "Change Password");
+$passwdPage->adopt($passwdForm);
+// CLEAN: This form validation is crap.
+//$passwdForm->lastSimpleItem->addEvent('onClick',"if (document.getElementById('profile-password').value == document.getElementById('profile-password-confirm').value) { svc_loadDiv('bookshelf-canvas-container','process-book-profile',svc_formParameters('profile-passwd-form')); } else { alert('Password mismatch.'); }; return false;");
+
+  /* Step 4.3: Appearance (skin) page */
+$skinPage = new akNotePage("skin","Appearance");
+$skinForm = new akForm("profile-skin-form",
+                       "/svc-process-book-profile.php",
+                        FORM_METHOD_POST);
+$skinForm->createSimpleItem("profile-header-skin",FORM_ITEM_RAW,
+                      "profile-header-skin","<h3 class=\"story-headline\">Appearance</h3>");
+$skinForm->createSimpleItem("profile-skin-agua",FORM_ITEM_RADIO,
+                      "profile-skin",'agua','Agua&nbsp;<img src="/skins/common/screenshot-agua.png" style="vertical-align:middle;" alt="Agua theme screenshot"/>');
+if ($auth_user->skin == 'agua') $skinForm->lastSimpleItem->hint = "checked";
+$skinForm->createSimpleItem("profile-skin-wine",FORM_ITEM_RADIO,
+                      "profile-skin",'wine','Wine&nbsp;<img src="/skins/common/screenshot-wine.png" style="vertical-align:middle;" alt="Wine theme screenshot"/>');
+if ($auth_user->skin == 'wine') $skinForm->lastSimpleItem->hint = "checked";
+$skinForm->createSimpleItem("profile-skin-basic",FORM_ITEM_RADIO,
+                      "profile-skin",'basic','Basic&nbsp;<img src="/skins/common/screenshot-basic.png" style="vertical-align:middle;" alt="Basic theme screenshot"/>');
+if ($auth_user->skin == 'basic') $skinForm->lastSimpleItem->hint = "checked";
+
+$skinForm->createSimpleItem("profile-skin-update", FORM_ITEM_SUBMIT,
+                            "profile-skin-update", "Update");
+
+// CLEAN: This form validation is crap.
+//$skinForm->lastSimpleItem->addEvent('onClick',"svc_loadDiv('bookshelf-canvas-container','process-book-profile',svc_formParameters('profile-skin-form'));");
+$skinPage->adopt($skinForm);
+
+/* Step 5: Create a notebook to hold the pages */
+$editBook = new akNotebook('profile-notebook');
+$editBook->adopt($identPage);
+$editBook->adopt($passwdPage);
+$editBook->adopt($skinPage);
+
+/* Step 6: Spit it out */
+$editBook->emit();
+
+?>

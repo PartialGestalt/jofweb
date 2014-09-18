@@ -1,0 +1,828 @@
+/* SECTION 1:Values and macros (common and skin-specific) {{{1 */
+  /* Common dimensions {{{2 */
+    /* Toplevel regions {{{3 */
+#define WIDTH_GUTTER     8px /* Area (margin) between toplevel regions */
+#define WIDTH_FULL     880px /* overall width */
+#define WIDTH_SIDEBAR  180px /* width of primary sidebar */
+#define WIDTH_WORKAREA 700px /* width of workarea */
+#define WIDTH_APP      512px   /* app part of workarea */
+#define WIDTH_MULTIBAR 188px   /* multibar part of workarea */
+#define WIDTH_BOOKSHELF 200px /* Bookshelf sidebar */
+#define WIDTH_BOOKWORK  664px /* Workarea for book editing */
+#define HEIGHT_CONTENT 400px
+    /* }}}3 Toplevel regions */
+    /* Inner content containers {{{3 */
+#define WIDTH_CONTENT_CONTAINER  864px /* Use whole space */
+#define WIDTH_SIDEBAR_CONTAINER  172px /* Left-justified in sidebar container */
+#define WIDTH_WORKAREA_CONTAINER 684px /* Right-justified in workarea div */
+#define WIDTH_APP_CONTAINER      504px /* Leftmost part of workarea */
+#define WIDTH_MULTIBAR_CONTAINER 172px /* Full multibar width */
+#define WIDTH_BOOKSHELF_CONTAINER 200px /* Bookshelf menu container */
+#define WIDTH_BOOKWORK_CONTAINER  656px /* Bookshelf canvas container */
+    /* }}}3 Inner content containers */
+  /* }}}2 Common dimensions */
+  /* Skin-specific colors {{{2 */
+#define WINESKIN_RED          #983B59
+#define WINESKIN_DARK_RED     #66273B
+#define WINESKIN_DARKER_RED   #4C1E2D
+#define WINESKIN_LIGHT_RED    #A84B69
+#define WINESKIN_LIGHTER_RED  #B85B79
+#define WINESKIN_LIGHTEST_RED #FAF2F5
+#define WINESKIN_BORDER       #333
+#define WINESKIN_BG_HEADER    #DDD
+#define WINESKIN_SHADOW_TOP   #FFF
+#define WINESKIN_SHADOW_BOTTOM #444
+
+  /* }}}2 Skin-specific colors */
+/* }}}1 Values and macros (common and skin-specific) */
+/* SECTION 2:Common CSS for all skins {{{1 */
+#include "../common/default.css.h"
+/* }}}1 */
+/* SECTION 3:Common toplevel containers {{{1 */
+  /* Baseline page info {{{2 */
+  /* These control the base look and layout; required for all skins */
+body.page-body {
+color:#333;
+font-family:'lucida grande',tahoma,verdana,arial,sans-serif;
+font-size:13px;
+font-weight:normal;
+background:#FFF url('/skins/wine/red_bar.png') repeat-x;
+PACKED();
+}
+  /* }}}2 Baseline page info */
+  /* Screen divisions {{{2 */
+      /* These should generally have no margins....
+       * content spacing is handled in containers below 
+       */
+#content-div {
+display:block;
+width:WIDTH_FULL;
+margin:0px auto auto auto;
+min-height:HEIGHT_CONTENT;
+}
+
+#sidebar-div {
+float:left;
+display:block;
+width:WIDTH_SIDEBAR;
+min-height:HEIGHT_CONTENT;
+PACKED();
+}
+
+#workarea-div {
+float:left;
+display:block;
+width:WIDTH_WORKAREA;
+min-height:HEIGHT_CONTENT;
+position:static;
+border-right:1px solid WINESKIN_BORDER;
+border-bottom:1px solid WINESKIN_BORDER;
+border-left:1px solid WINESKIN_BORDER;
+border-top:0px;
+margin:0px -1px -1px -1px;
+padding:0px;
+}
+
+#application-div {
+float:left;
+display:block;
+width:WIDTH_APP;
+min-height:HEIGHT_CONTENT;
+PACKED();
+}
+
+#multibar-div {
+float:left;
+display:block;
+width:WIDTH_MULTIBAR;
+min-height:HEIGHT_CONTENT;
+PACKED();
+overflow:hidden;
+}
+
+#tagline-div {
+margin-left:auto;
+margin-right:auto;
+text-align:center;
+font-style:italic;
+font-size:14pt;
+}
+  /* }}}2 Screen divisions */
+  /* Content containers {{{2 */
+#content-container { /* Full-width page content */
+width:WIDTH_CONTENT_CONTAINER;
+border:0;
+padding:0;
+margin:0 auto;
+}
+
+#sidebar-container { /* Sidebar content */
+width:WIDTH_SIDEBAR_CONTAINER;
+border:0;
+margin:0 WIDTH_GUTTER 0 0;
+padding:0;
+}
+
+#workarea-container {
+width:WIDTH_WORKAREA_CONTAINER;
+margin-left:WIDTH_GUTTER;
+height:auto;
+}
+
+#application-container {
+width:WIDTH_APP_CONTAINER;
+margin-left:WIDTH_GUTTER;
+}
+
+#multibar-container {
+width:WIDTH_MULTIBAR_CONTAINER;
+margin-left:WIDTH_GUTTER;
+}
+
+.form-popup {
+display:none;
+border:2px solid WINESKIN_DARKER_RED;
+background-color:WINESKIN_LIGHTEST_RED;
+position:fixed;
+z-index:1; /* Above when visible */
+min-height:100px;
+min-width:100px;
+}
+
+.form-popup-decoration { /* Frame decorations div */
+display:block;
+padding:4px;
+background-color:WINESKIN_RED;
+min-height:16px;
+border-bottom:2px solid WINESKIN_DARKER_RED;
+}
+
+.form-popup-close { /* Close button on a form popup frame */
+float:right;
+}
+
+.form-popup-title {
+color:white;
+font-size:10pt;
+font-weight:bold;
+}
+
+
+  /* }}}2 Content containers */
+/* }}}1 Common toplevel containers */
+/* SECTION 4:Common toplevel content {{{1 */
+/* SECTION 4.1:Main navigation (top-nav) {{{2 */
+#define HEIGHT_NAV 32px
+#top-nav-div {
+background-color:WINESKIN_LIGHT_RED;
+color:white;
+width:WIDTH_WORKAREA;
+margin:-1px -1px 0px -1px;
+border-top:1px solid WINESKIN_BORDER;
+border-left:1px solid WINESKIN_BORDER;
+border-right:1px solid WINESKIN_BORDER;
+border-bottom:0;
+height:HEIGHT_NAV;
+float:right;
+}
+
+ul.top-nav {
+font-weight:bold;
+font-size:12px;
+margin:0px;
+padding:0px;
+height:HEIGHT_NAV;
+}
+
+li.top-nav {
+float:left;
+PACKED();
+height:HEIGHT_NAV;
+}
+
+li.top-nav-meta {
+float:right;
+height:HEIGHT_NAV;
+PACKED();
+}
+
+a.top-nav, a.top-nav-meta {
+padding-left:10px;
+padding-right:10px;
+padding-top:8px;
+display:inline-block;
+overflow:hidden;
+color:#FFF;
+background-color:WINESKIN_LIGHT_RED;
+height:22px;
+}
+
+a.top-nav:hover, a.top-nav-meta:hover, li.top-nav:hover, li.top-nav-meta:hover {
+color:#FFF;
+background-color:WINESKIN_LIGHTER_RED;
+}
+/* }}}2 Main navigation (top-nav) */
+/* SECTION 4.2:Menu generics {{{2 */
+  /* SECTION 4.2.1: Popup menus {{{3 */
+#define HEIGHT_MENU_POPUP 24px
+div.menu-popup {
+position:absolute;
+display:none;
+border-left:1px solid black;
+border-right:1px solid black;
+border-bottom:1px solid black;
+margin:0px;
+padding:0px;
+}
+
+ul.menu-popup {
+font-weight:bold;
+font-size:12px;
+color:#FFF;
+PACKED();
+background-color:WINESKIN_LIGHT_RED;
+}
+
+li.menu-popup {
+margin:0px;
+height:HEIGHT_MENU_POPUP;
+padding:0px 8px;
+}
+
+a.menu-popup {
+padding-left:8px;
+margin-left:-8px;
+padding-right:8px;
+margin-right:-8px;
+padding-top:4px;
+display:inline-block;
+overflow:hidden;
+color:#FFF;
+background-color:WINESKIN_LIGHT_RED;
+height:20px; /* HEIGHT_MENU_POPUP - padding-top */
+width:100%;
+}
+
+a.menu-popup:hover, li.menu-popup:hover {
+color:#FFF;
+background-color:WINESKIN_LIGHTER_RED;
+}
+   /* }}}3 Popup menus */
+  /* SECTION 4.2.2: Inline menus {{{3 */
+#define HEIGHT_MENU_INLINE 24px
+div.menu-inline {
+PACKED();
+}
+
+ul.menu-inline {
+height:HEIGHT_MENU_INLINE;
+font-weight:bold;
+font-size:12px;
+color:#FFF;
+margin:8px 8px 8px 8px;
+border:1px solid WINESKIN_BORDER;
+padding:0;
+background-color:WINESKIN_LIGHT_RED;
+}
+
+li.menu-inline {
+float:left;
+PACKED();
+height:HEIGHT_MENU_INLINE;
+}
+
+a.menu-inline {
+display:inline-block;
+color:#FFF;
+background-color:WINESKIN_LIGHT_RED;
+height:18px;
+margin:0;
+border-left:0;
+border-top:0;
+border-bottom:0;
+border-right:1px solid WINESKIN_BORDER;
+padding:6px 8px 0 8px;
+}
+
+a.menu-inline:hover, li.menu-inline:hover {
+color:#FFF;
+background-color:WINESKIN_LIGHTER_RED;
+}
+   /* }}}3 Inline menus */
+/* }}}2 Menu generics */
+/* SECTION 4.3:Footer {{{2 */
+  /* Footer overall {{{3 */
+#footer-div {
+width:WIDTH_FULL;
+height:36px;
+margin:0px auto 0px auto;
+}
+
+.footer-text {
+display:block;
+font-size:9pt;
+font-weight:normal;
+width:WIDTH_FULL;
+margin:0px auto 0px auto;
+border:0px;
+padding:0px;
+text-align:center;
+}
+  /* }}}3 Footer overall */
+  /* Footer contents {{{3 */
+#footer-copyright-div {
+}
+#footer-contact-div {
+}
+#footer-validator-div {
+width:180px;
+float:right;
+}
+  /* }}}3 Footer contents */
+/* }}}2 Footer */
+/* SECTION 4.4:Partner links {{{2 */
+ul.partner-nav {
+font-weight:normal;
+font-size:10px;
+margin:0px;
+padding:8px 0px;
+height:36px;
+}
+
+li.partner-nav-extern {
+float:left;
+border:0px;
+margin-left:5px;
+height:36px;
+}
+
+li.partner-nav-ref {
+float:left;
+border:0px;
+margin-left:5px;
+height:36px;
+}
+
+a.partner-nav {
+padding:0px;
+border:0px;
+margin:0px;
+overflow:hidden;
+height:36px;
+}
+/* }}}2 Partner links */
+/* SECTION 4.5:Generic block support {{{2 */
+  /* SECTION 4.5.1: Common blocks {{{3 */
+.block-title {
+width:100%;
+PACKED();
+font-weight:bold;
+text-align:center;
+}
+
+.block-text {
+width:100%;
+PACKED();
+display:block;
+text-align:center;
+}
+  /* }}}3 Common blocks */
+  /* SECTION 4.5.2: Raw blocks {{{3 */
+.block-raw {
+width:100%;
+border:0px;
+padding:0px;
+margin:6px 0px 6px 0px;
+}
+  /* }}}3 Raw blocks */
+  /* SECTION 4.5.3: Multibar blocks {{{3 */
+.block-multibar {
+border:1px solid WINESKIN_BORDER;
+width:172px;
+padding:0px;
+margin:8px 0px 0px 0px;
+}
+
+.block-content-multibar {
+PACKED();
+}
+
+.block-title-multibar {
+background-color:WINESKIN_BG_HEADER;
+border-bottom:1px solid WINESKIN_BORDER;
+}
+
+.block-prefix-multibar, .block-suffix-multibar {
+PACKED();
+}
+
+  /* }}}3 Multibar blocks */
+  /* SECTION 4.5.4: Sidebar blocks {{{3 */
+.block-sidebar {
+border:0px;
+padding:0px;
+margin:8px 0px 0px 0px;
+border:1px solid WINESKIN_BORDER;
+width:172px;
+}
+
+.block-content-sidebar {
+PACKED();
+}
+
+.block-title-sidebar {
+background-color:WINESKIN_BG_HEADER;
+border-bottom:1px solid WINESKIN_BORDER;
+}
+
+.block-prefix-sidebar, .block-suffix-sidebar {
+PACKED();
+}
+
+.block-content-addmargin {
+margin:3px;
+}
+
+  /* }}}3 Sidebar blocks */
+/* }}}2 Generic block support */
+/* }}}1 Common toplevel content */
+/* SECTION 5:Skin-specific toplevel content {{{1 */
+#red-bar-spacer {
+display:block;
+height:10px;
+width:100%;
+}
+
+#red-bar-content {
+width:WIDTH_FULL;
+height:32px;
+margin:0 auto 0 auto;
+}
+
+#red-bar-logo {
+width:WIDTH_SIDEBAR;
+height:32px;
+float:left;
+margin:auto;
+}
+/* }}}1 Skin-specific toplevel content */
+/* SECTION 6:Application/block content {{{1 */
+/* SECTION 6.1:Forms {{{2 */
+  /* Generic forms {{{3 */ 
+.form-div {
+margin:0 auto;
+}
+
+.form-item-row {
+}
+
+.form-item-label {
+text-align:right;
+font-weight:bold;
+vertical-align:middle;
+}
+
+.form-item-contents {
+text-align:left;
+vertical-align:middle;
+}
+
+  /* }}}3 Generic forms */
+  /* Form items {{{3 */ 
+.form-item-time {
+text-align:right;
+}
+
+.form-item-note {
+margin-left:12px;
+}
+  /* }}}3 Form items */
+/* }}}2 Forms */
+/* SECTION 6.2:Map blocks {{{2 */
+#define MAP_HEIGHT 400px
+#define MAP_WIDTH  400px
+
+#block-map-div {
+width:MAP_WIDTH;
+margin-top:10px;
+margin-left:auto;
+margin-right:auto;
+}
+
+.embedded-map {
+height:MAP_HEIGHT;
+width:MAP_WIDTH;
+border:1px solid WINESKIN_BORDER;
+}
+/* }}}2 Map blocks */
+/* SECTION 6.3:Calendar {{{2 */
+  /* Layout {{{3 */
+.block-calendar-div {
+width:90%;
+text-align:center;
+}
+
+.block-calendar-row, #block-calendar-table {
+width:100%;
+text-align:center;
+}
+  /* }}}3 Layout */
+  /* Cell display {{{3 */
+.block-calendar-previous, .block-calendar-next {
+font-size:10pt;
+color:black;
+background-color:WINESKIN_LIGHTER_RED;
+border:2px solid WINESKIN_LIGHTER_RED;
+}
+
+.block-calendar-title {
+text-align:center;
+}
+
+.block-calendar-nav {
+font-weight:bold;
+font-size:12px;
+background-color:WINESKIN_LIGHTEST_RED;
+color:WINESKIN_DARKER_RED;
+border:1px solid WINESKIN_LIGHTEST_RED;
+padding: 0px 4px;
+}
+
+.block-calendar-nav:hover {
+background-color:WINESKIN_LIGHTEST_RED;
+color:WINESKIN_DARKER_RED;
+padding: 0px 4px;
+border:1px solid WINESKIN_DARKER_RED;
+}
+
+.block-calendar-current {
+color:white;
+font-size:10pt;
+font-weight:bold;
+background-color:WINESKIN_RED;
+border:2px solid WINESKIN_RED;
+}
+
+.block-calendar-current:hover, .block-calendar-previous:hover, .block-calendar-next:hover {
+border:2px solid WINESKIN_BORDER;
+background-color:WINESKIN_LIGHTEST_RED;
+color:black;
+}
+  /* }}}3 Cell display */
+/* }}}2 Calendar */
+/* SECTION 6.4:Stories {{{2 */
+  /* General layout {{{3 */
+.story-div {
+PACKED();
+}
+  /* }}}3 General layout */
+  /* Headlines {{{3 */
+.story-headline {
+color:WINESKIN_DARKER_RED;
+border-bottom:2px solid WINESKIN_DARKER_RED;
+margin:0px;
+}
+
+h1.story-headline {
+padding-top:8px;
+text-align:right;
+font-size:20pt;
+width:100%;
+clear:both;
+}
+
+h2.story-headline {
+padding-top: 5px;
+font-size:16pt;
+width:95%;
+clear:both;
+}
+
+h3.story-headline {
+padding-top: 5px;
+font-size:14pt;
+width:90%;
+clear:both;
+}
+
+h4.story-headline {
+padding-top: 4px;
+font-size:13px;
+width:100%;
+clear:both;
+}
+  /* }}}3 Headlines */
+  /* Images/bylines {{{3 */
+.story-lede {
+float:left;
+margin:5px;
+padding:0;
+border:0;
+}
+
+.story-trail {
+float:right;
+margin:5px;
+padding:0;
+border:0;
+}
+
+.story-banner {
+display:block;
+margin-left:auto;
+margin-right:auto;
+padding:0;
+border:0;
+width:100%;
+}
+  /* }}}3 Images/bylines */
+  /* Text {{{3 */
+.story-span {
+margin-top:5px;
+display:block;
+}
+
+.story-span a {
+text-decoration:underline;
+}
+
+.story-meta {
+margin-top:5px;
+display:block;
+font-style:italic;
+}
+
+.story-error {
+margin-top:5px;
+display:block;
+font-weight:bold;
+font-size:13pt;
+color:WINESKIN_DARK_RED;
+text-align:center;
+}
+
+.story-warning {
+font-style:italic;
+margin-top:5px;
+display:block;
+font-size:12pt;
+color:WINESKIN_DARK_RED;
+text-align:center;
+}
+  /* }}}3 */
+/* }}}2 Stories */
+/* SECTION 6.5:Bookshelf {{{2 */
+  /* Menu {{{3 */
+#bookshelf-menu-div {
+width:WIDTH_BOOKSHELF;
+float:left;
+PACKED();
+}
+#bookshelf-menu-container {
+font-weight:bold;
+width:WIDTH_BOOKSHELF_CONTAINER;
+border:0px;
+margin:10px 0 0 0;
+padding:0px;
+display:block;
+text-align:center;
+}
+
+.bookshelf-title {
+width:100%;
+display:none;
+}
+
+.book-span {
+float:left;
+display:block;
+color:WINESKIN_BORDER;
+background-color:WINESKIN_LIGHTEST_RED;
+border:2px solid WINESKIN_LIGHTEST_RED;
+height:104px;
+width:85px;
+margin-left:5px;
+margin-bottom:5px;
+}
+
+.book-divider {
+width:95%;
+float:left;
+clear:right;
+border-bottom:2px solid WINESKIN_BORDER;
+margin-bottom:5px;
+}
+
+.book-span-divider {
+display:none;
+}
+
+.book-span-book:before {
+content:url('/skins/wine/book_new.png');
+}
+
+.book-span-profile:before {
+content:url('/skins/wine/book_profile.png');
+}
+
+.book-span-album:before {
+content:url('/skins/wine/book_photo.png');
+}
+
+.book-span-sermon:before {
+content:url('/skins/wine/book_rss.png');
+}
+
+.book-span-blog:before {
+content:url('/skins/wine/book_rss.png');
+}
+
+.book-span-event:before {
+content:url('/skins/wine/book_calendar.png');
+}
+
+.book-span-generic:before {
+content:url('/skins/common/book.png');
+}
+
+.book-span:hover {
+padding:0px;
+border:2px solid WINESKIN_RED;
+}
+
+
+  /* }}}3 Menu */
+  /* Workarea {{{3 */
+#bookshelf-canvas-div {
+width:WIDTH_BOOKWORK;
+float:left;
+PACKED();
+}
+#bookshelf-canvas-container {
+width:WIDTH_BOOKWORK_CONTAINER;
+border:0;
+padding:0;
+margin:0 0 0 8px;
+min-height:600px;
+}
+
+/* Default notebook page is hidden */
+.notebook-page {
+display:none; 
+}
+/* Active notebook page is visible */
+.notebook-page-active {
+display:block;
+}
+  /* }}}3 Workarea */
+/* }}}2 Bookshelf */
+/* SECTION 6.7:Notebooks {{{2 */
+.notebook-page-active {
+display:block;
+border:1px solid WINESKIN_BORDER;
+padding:0;
+margin:1px 0 0 0;
+}
+.notebook-page {
+display:none;
+border:1px solid WINESKIN_BORDER;
+padding:0;
+margin:1px 0 0 0;
+}
+.notebook-tab-list {
+float:left;
+display:block;
+font-weight:bold;
+font-size:12px;
+text-align:center;
+height:32px;
+border:0;
+padding:0;
+margin:8px auto 0px 0px;
+}
+.notebook-tab-active {
+height:26px;
+background-color:WINESKIN_LIGHTER_RED;
+color:#FFF;
+float:left;
+border:1px solid WINESKIN_BORDER;
+padding:10px 8px 0px 8px;
+margin:0;
+cursor:pointer;
+}
+.notebook-tab {
+height:22px;
+background-color:WINESKIN_LIGHT_RED;
+color:#FFF;
+float:left;
+border:1px solid WINESKIN_BORDER;
+padding:10px 8px 0px 8px;
+margin:0;
+cursor:pointer;
+}
+.notebook-tab:hover {
+background-color:WINESKIN_LIGHTER_RED;
+}
+/* }}}2 Notebooks */
+
+/* }}}1 Application/block content */

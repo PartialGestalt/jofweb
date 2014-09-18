@@ -1,0 +1,60 @@
+<?php
+// PHP Script for profile editor mainpage
+/* Step 1: Includes */
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/util-auth.php");
+require_once("library/core/class-notebook.php");
+require_once("library/core/util-skin.php");
+/* Step 2: Pull in any skin pre-content */
+skin_include("account-profile-pre.php");
+?>
+<?php
+/* Step 3: Get user auth info */
+auth_validate();
+
+/* Step 4: Introductory story */
+$ss = new akStory("edit-profile-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Profile Settings");
+$ss->emit();
+
+/* Step 5: Identity section */
+  /* Step 5.1: Create notebook */
+$idNotebook = new akNotebook('profile-identity-notebook');
+  /* Step 5.2: Create page */
+$idPage = new akNotePage("ident","Who am I?");
+  /* Step 5.3: Form */
+$idForm = new akForm("profile-identity-form",
+                     "/svc-process-account-profile.php",
+                     FORM_METHOD_POST);
+  /* Step 5.4: Form items */
+$idForm->createSimpleItem("profile-picture", FORM_ITEM_IMAGE,
+                          "profile-picture", NULL,
+                          "Profile picture:");
+$idForm->createSimpleItem("profile-display-name", FORM_ITEM_TEXT,
+                          "profile-display-name", $auth_user->displayname,
+                          "Display Name:");
+
+$idForm->createSimpleItem("profile-full-name", FORM_ITEM_TEXT,
+                          "profile-full-name", $auth_user->fullname,
+                          "Full Name:");
+
+$idForm->createSimpleItem("profile-email", FORM_ITEM_TEXT,
+                          "profile-email", $auth_user->email,
+                          "Email:");
+
+$idForm->createSimpleItem("profile-ident-update", FORM_ITEM_SUBMIT,
+                          "profile-ident-update", "Update");
+  /* Step 5.4: Adoptions */
+$idPage->adopt($idForm);
+$idNotebook->adopt($idPage);
+
+  /* Step 5.5: Emit */
+$idNotebook->emit();
+
+?>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("edit-story-file-post.php");
+?>

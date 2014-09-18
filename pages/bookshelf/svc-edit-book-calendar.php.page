@@ -1,0 +1,102 @@
+<?php
+// PHP bookshelf page to emit calendar/event editor form
+
+?>
+<?php
+/* Step 0: Includes */
+require_once("library/core/util-config.php");
+require_once("library/core/util-db.php");
+require_once("library/core/class-book.php");
+require_once("library/core/class-story.php");
+require_once("library/core/class-form.php");
+require_once("library/core/class-notebook.php");
+
+/* Step 1: Pull info from DB */
+$book = config_getParameter('edit-book-object');
+
+/* Step 2: Start intro story */
+$ss = new akStory("edit-calendar-story");
+$ss->createSimpleChunk(STORY_CHUNK_SECTION,"Event editor");
+$ss->emit();
+
+/* Step 3: Create an editor notebook */
+  /* Step 3.1: Editor page for NEW event entry */
+$editPage = new akNotePage("edit-new","New Event");
+$editForm = new akForm("event-edit-form",
+                       "/svc-process-book-calendar.php",
+                       FORM_METHOD_POST);
+  /* Add a couple of hidden fields for data tracking */
+$editForm->createSimpleItem("event-edit-book",FORM_ITEM_HIDDEN,
+                            "event-edit-book",$book->id);
+$editForm->createSimpleItem("event-edit-mode",FORM_ITEM_HIDDEN,
+                            "event-edit-mode","new");
+  /* Short description */
+$editForm->createSimpleItem("event-edit-name",FORM_ITEM_TEXT,
+                            "event-edit-name",null,
+                            "Event (short description):");
+$editForm->lastSimpleItem->hsize = 40;
+  /* Start date/time */
+$editForm->createSimpleItem("event-edit-start-date",FORM_ITEM_DATE,
+                            "event-edit-start-date","00/00/0000",
+                            "Event date:");
+$editForm->createSimpleItem("event-edit-start-time",FORM_ITEM_TIME,
+                            "event-edit-start-time",null,
+                            "Event time:");
+  /* End date/time (if multiday) */
+    /* Start the Item Group */
+$editForm->startItemGroup("event-edit-multiday",FORM_GROUP_BOOLEAN,
+                          "Multiday event?",FORM_VALUE_FALSE);
+    /* Add date to group */
+$editForm->createSimpleItem("event-edit-end-date",FORM_ITEM_DATE,
+                            "event-edit-end-date","00/00/0000",
+                            "Event end date:");
+    /* Add time to group */
+$editForm->createSimpleItem("event-edit-end-time",FORM_ITEM_TIME,
+                            "event-edit-end-time",null,
+                            "Event end time:");
+    /* Close the group */
+$editForm->endItemGroup();
+
+  /* Event description */
+$editForm->createSimpleItem("event-edit-notes",FORM_ITEM_TEXTAREA,
+                            "event-edit-notes",null,
+                            "Full event description:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->vsize = 10;
+  /* Add announcement? */
+$editForm->startItemGroup("event-edit-announce",FORM_GROUP_BOOLEAN,
+                          "Add announcement?", FORM_VALUE_FALSE);
+
+$editForm->createSimpleItem("event-edit-announce-title",FORM_ITEM_TEXT,
+                            "event-edit-announce-title",null,
+                            "Announcement headline:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->createSimpleItem("event-edit-announce-text",FORM_ITEM_TEXTAREA,
+                            "event-edit-announce-text",null,
+                            "Announcement text:");
+$editForm->lastSimpleItem->hsize = 40;
+$editForm->lastSimpleItem->vsize = 10;
+
+$editForm->endItemGroup();
+
+  /* Submission */
+$editForm->createSimpleItem("event-edit-save",FORM_ITEM_SUBMIT,
+                            "event-edit-save","Save event");
+$editPage->adopt($editForm);
+
+  /* Step 3.2: Existing event editor */
+
+  /* Step 3.3: Book Properties page */
+$propPage = new akNotePage("properties","Book Properties");
+
+
+
+  /* Step 4: Make the notebook */
+$editBook = new akNotebook("edit-event-notebook");
+$editBook->adopt($editPage);
+//$editBook->adopt($existPage);
+//$editBook->adopt($propPage);
+
+$editBook->emit();
+
+?>

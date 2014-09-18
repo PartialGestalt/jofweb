@@ -1,0 +1,42 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("about-affiliations-pre.php");
+?>
+<?php
+require_once("library/core/class-story.php");
+$aboutAffiliations = new akStory();
+  /* HEADLINE */
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_HEADLINE,"Journey of Faith Affiliations");
+/* Step 2: Create "about" navigation menu */
+$nav = new akMenu();
+$nav->dom_id = "about-menu";
+
+$nav->createSimpleItem("Overview","about.php","Overview");
+$nav->createSimpleItem("Staff","about-staff.php","Meet the staff of Journey of Faith");
+$nav->createSimpleItem("Committees","about-committees.php","Committees in the church");
+$nav->createSimpleItem("Affiliations","about-affiliations.php","Groups with whom we are affiliated");
+$nav->createSimpleItem("Support Us","about-support-us.php","Online support");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_OBJECT,"about-menu",$nav);
+  /* Blurb */
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-affiliations/intro.html");
+  /* Global UMC */
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_SECTION,"United Methodist Church");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_LEDE,"skins/common/button_icon_umc_64.png");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-affiliations/umc.html");
+  /* CTC UMC */
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_SECTION,"Central Texas Conference");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_LEDE,"skins/common/button_icon_ctc_64.png");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-affiliations/ctc.html");
+  /* Reconciling ministries */
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_SECTION,"Reconciling Ministries Network");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_LEDE,"skins/common/button_icon_rmn_64.png");
+$aboutAffiliations->createSimpleChunk(STORY_CHUNK_FILE,"assets/pages/about-affiliations/rmn.html");
+  /* Ship it */
+$aboutAffiliations->emit();
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("about-affiliations-post.php");
+?>

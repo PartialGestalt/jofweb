@@ -1,0 +1,19 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("finance-pre.php");
+?>
+<?php
+require_once("library/core/class-table.php");
+$financials = akTable::fromFile('assets/text/pages/finance/current.aktbl');
+if (null == $financials) {
+  print 'FMBackwards.\n';
+} else {
+  $financials->emit();
+}
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("finance-post.php");
+?>

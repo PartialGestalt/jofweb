@@ -1,0 +1,13 @@
+<?php
+require_once("library/core/class-story.php");
+// Open the announcements section
+$news = new akStory();
+$news->createSimpleChunk(STORY_CHUNK_HEADLINE,"Recent Announcements");
+$news->emit();
+
+// Dump the most recent announcements
+$announcements = new akBlock(BLOCK_TYPE_APP,"blocks/app/block-announcements.php");
+$announcements->setParameter('max_count',30);
+$announcements->emit();
+
+?>

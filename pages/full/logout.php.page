@@ -1,0 +1,8 @@
+<?php
+$logStory = new akStory();
+
+$logStory->createSimpleChunk(STORY_CHUNK_HEADLINE,"Logout");
+$logStory->createSimpleChunk(STORY_CHUNK_SECTION,"Success");
+$logStory->createSimpleChunk(STORY_CHUNK_TEXT,"You have been successfully logged out");
+$logStory->emit();
+?>

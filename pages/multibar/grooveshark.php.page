@@ -1,0 +1,27 @@
+<?php
+// If the skin has pre-content setup, include it here.
+require_once("library/core/util-skin.php");
+skin_include("grooveshark-pre.php");
+?>
+<?php
+// Verify authenticated user
+if (!is_authenticated())
+{
+  // Not authenticated; can't use this page.
+  $authStory = new akStory();
+  $authStory->createSimpleChunk(STORY_CHUNK_SECTION,"Authentication Failure");
+  $authStory->createSimpleChunk(STORY_CHUNK_TEXT,"You must be logged in to get your groove on.");
+  $authStory->emit();
+}
+else
+{
+  // grab grooveshark block.
+  $groove = new akblock(block_type_app,"blocks/app/block-grooveshark.php");
+  $groove->emit();
+}
+?>
+<div class="closure-div"></div>
+<?php
+// If the skin has post-content setup, include it here.
+skin_include("grooveshark-post.php");
+?>
